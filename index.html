@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Chat en ligne </title>
+        <link rel="stylesheet" href="style.css" />
+         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script> 
+			function envoyerMsg(){
+				var auteur = $("#auteur").val();
+				var message = $("#textAreaMessage").val();
+				$.ajax({
+					type : "POST",
+					url : "enregistrer.php",
+					data : "auteur="+auteur+"&message="+message,
+					success : function(msg){
+					}
+
+				});
+				return false;
+			}
+			
+			function recupererMsg(){
+
+					$.ajax({
+					type : "GET",
+					url : "recuperer.php",
+					success : function(msg){
+						var listeMessage = JSON.parse(msg);
+						$("#messages").html("");
+						for(var i = 0;i<10;i++){
+							var message = listeMessage[i].message;
+							var auteur = listeMessage[i].auteur;
+							var horaire = listeMessage[i].horaire;
+
+						
+						$("#messages").append("<div id='message'> <p id='auteurmsg'>" + auteur + "</p>" + "<p id='textmsg'>" + message + "</p>" + "<p id='horaire'>" + "Il y a " + horaire + "</p></div>");
+						}
+						
+					}
+
+				});
+			}
+
+			$(document).ready(function(){
+				recupererMsg();
+				$("#envoyer").click(function(){
+					envoyerMsg();
+					recupererMsg();
+					$('#auteur').val("");
+					$('#textAreaMessage').val("");
+				});
+
+			});
+
+			/*var refresh = setInterval(function(){
+				$("#messages").load('index.html');
+			},4000);*/
+
+
+
+			
+			
+			setInterval(recupererMsg,3000);
+
+
+		</script>
+    </head>
+    <body>
+        <div id="page">
+            
+            
+                
+            <div id="divauteur">
+                Auteur : <input type="text" id="auteur"/>
+
+            </div>
+
+            <div id="chatlogs">
+
+                <div id="messages">
+
+                </div>
+                
+            </div>
+
+            <div id="ecrireMessage">
+
+                 <br>
+                        <textarea placeholder="Ecrivez votre message..." id="textAreaMessage" rows=1 COLS=50></textarea>
+                        <input id="envoyer" type="button" value="Envoyer" >
+            </div>
+            
+		</div>
+    </body>
+    
+</html>
+
